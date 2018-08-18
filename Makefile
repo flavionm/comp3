@@ -1,5 +1,5 @@
 CC		:= g++
-C_FLAGS := -std=c++98 -pedantic-errors -Wall -Wextra -march=native -O2
+C_FLAGS := -std=c++98 -pedantic-errors -Wall -Wextra #-march=native -O2
 
 BIN		:= bin
 SRC		:= src

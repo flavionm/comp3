@@ -1,26 +1,26 @@
 #include <iostream>
 #include <cstdlib>
-#include "stack.h"
+#include "stack_int.h"
 
-Stack::Stack() {
+StackInt::StackInt() {
 	max = 2;
 	list = new int[max];
 	pointer = 0;
 }
 
-Stack::~Stack() {
+StackInt::~StackInt() {
 	delete [] list;
 }
 
-void Stack::push(const int num) {
+void StackInt::push(const int num) {
 	if (pointer >= max)
 		overflow();
 	list[pointer] = num;
 	pointer++;
 }
 
-int Stack::pop() {
-	if (pointer < 0) {
+int StackInt::pop() {
+	if (pointer <= 0) {
 		std::cerr << "Empty stack\n";
 		std::exit(1);
 	} else {
@@ -29,7 +29,7 @@ int Stack::pop() {
 	}
 }
 
-const Stack& Stack::operator= (const Stack& s) {
+const StackInt& StackInt::operator= (const StackInt& s) {
 	pointer = s.pointer;
 	if (max != s.max) {
 		delete [] list;
@@ -43,19 +43,19 @@ const Stack& Stack::operator= (const Stack& s) {
 	return *this;
 }
 
-Stack& Stack::operator<< (const int num) {
+StackInt& StackInt::operator<< (const int num) {
 	push(num);
 
 	return *this;
 }
 
-int& Stack::operator>> (int& num) {
+int& StackInt::operator>> (int& num) {
 	num = pop();
 
 	return num;
 }
 
-void Stack::overflow() {
+void StackInt::overflow() {
 	int *temp = list;
 	int oldMax = max;
 	max = 2 * max;
@@ -66,7 +66,7 @@ void Stack::overflow() {
 	delete [] temp;
 }
 
-void Stack::replaceList(const int newList[], const int size) {
+void StackInt::replaceList(const int newList[], const int size) {
 	if (size >= max) {
 		std::cerr << "List too small\n";
 		std::exit(1);
