@@ -13,12 +13,10 @@ Stack::~Stack() {
 }
 
 void Stack::push(const int num) {
-	if (pointer >= max) {
+	if (pointer >= max)
 		overflow();
-	} else {
-		list[pointer] = num;
-		pointer++;
-	}
+	list[pointer] = num;
+	pointer++;
 }
 
 int Stack::pop() {

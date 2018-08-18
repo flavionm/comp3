@@ -3,8 +3,12 @@
 
 int main() {
 	Stack s;
-	int x;
 
-	(s << 5) << 4;
-	std::cout << ((s >> x) += 1) << '\n';
+	for (int i = 0; i < 100; i++) {
+		s.push(i);
+	}
+
+	for (int i = 0; i < 100; i++) {
+		std::cout << s.pop() << std::endl;
+	}
 }
