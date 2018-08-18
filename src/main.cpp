@@ -7,8 +7,11 @@ int main() {
 	int **v1 = new int*[10];
 	int **v2 = new int*[10];
 
+
 	for (int i = 0; i < 10; i++) {
+		*(v1 + i) = new int;
 		**(v1 + i) = i;
+		*(v2 + i) = new int;
 		**(v2 + i) = -i;
 	}
 	std::cout << "Here\n";
