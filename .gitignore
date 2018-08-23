@@ -1,0 +1,6 @@
+#folders
+.vscode/
+bin
+
+#files
+*.json
