@@ -1,5 +1,6 @@
 #include <iostream>
+#include "vetor.cc"
 
 int main(int argc, char *argv[]) {
-	std::cout << "Hello Easy C++ project!" << std::endl;
+	Vector<2, int> v;
 }
