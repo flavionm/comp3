@@ -1,6 +1,6 @@
 #include <iostream>
 #include "vetor.cc"
 
-int main(int argc, char *argv[]) {
+int main() {
 	Vector<2, int> v;
 }

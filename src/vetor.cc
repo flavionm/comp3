@@ -14,13 +14,18 @@ class Vector {
 };
 
 template <int N, typename T>
-Vector<> Vector<N, T>::Vector(): size(0) {}
+Vector<N, T>::Vector(): size(0) {}
 
-void Vector::printArray() {
+template <int N, typename T>
+Vector<N, T>::~Vector() {}
+
+template <int N, typename T>
+void Vector<N, T>::printArray() {
 	for (int i = 0; i < size; i++)
-		cout << array[i] << endl;
+		std::cout << array[i] << std::endl;
 }
 
-void Vector::printSize() {
-	cout << size << endl;
+template <int N, typename T>
+void Vector<N, T>::printSize() {
+	std::cout << size << std::endl;
 }
