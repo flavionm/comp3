@@ -2,5 +2,9 @@
 #include "vetor.cc"
 
 int main() {
-	Vector<2, int> v;
+	Vector<3, int> v;
+	v = 5, 4, 9;
+
+	v.printArray();
+	v.printSize();
 }
