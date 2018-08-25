@@ -35,13 +35,36 @@ class Vector {
 		friend Vector<3, _T> crossProduct(const Vector<3, _T>& u, const Vector<3, _T>& v);
 		void print(decltype(std::cout)& ostream) const;
 
-		void printArray(); //Temporary
-		void printSize(); //Temporary
-
 	private:
 		T array[D];
 		int size;
 };
+
+template <int D, typename T>
+Vector<D, T>& operator *(T n, Vector<D, T>& v);
+
+template <typename T>
+class VectorCrossOperatorMediator;
+
+template <typename T>
+VectorCrossOperatorMediator<T> operator *(const Vector<3, T>& v);
+
+template <typename T>
+Vector<3, T> operator *(const Vector<3, T>& v, const VectorCrossOperatorMediator<T>& m);
+
+template <typename T>
+class VectorCrossOperatorMediator {
+	private:
+		const Vector<3, T>& v;
+		template <typename _T>
+		friend Vector<3, _T> operator *(const Vector<3, _T>& v, const VectorCrossOperatorMediator<_T>& m);
+
+		VectorCrossOperatorMediator(const Vector<3, T>& callerV);
+		template <typename _T>
+		friend VectorCrossOperatorMediator<_T> operator *(const Vector<3, _T>& v);
+};
+
+//Definitions
 
 template <int D, typename T>
 Vector<D, T>::Vector(): size(0) {
@@ -166,27 +189,6 @@ Vector<D, T>& operator *(T n, Vector<D, T>& v) {
 }
 
 template <typename T>
-class VectorCrossOperatorMediator;
-
-template <typename T>
-VectorCrossOperatorMediator<T> operator *(const Vector<3, T>& v);
-
-template <typename T>
-Vector<3, T> operator *(const Vector<3, T>& v, const VectorCrossOperatorMediator<T>& m);
-
-template <typename T>
-class VectorCrossOperatorMediator {
-	private:
-		const Vector<3, T>& v;
-		template <typename _T>
-		friend Vector<3, _T> operator *(const Vector<3, _T>& v, const VectorCrossOperatorMediator<_T>& m);
-
-		VectorCrossOperatorMediator(const Vector<3, T>& callerV);
-		template <typename _T>
-		friend VectorCrossOperatorMediator<_T> operator *(const Vector<3, _T>& v);
-};
-
-template <typename T>
 VectorCrossOperatorMediator<T>::VectorCrossOperatorMediator(const Vector<3, T>& callerV): v (callerV) {}
 
 template <typename T>
@@ -216,16 +218,4 @@ decltype(std::cout)& operator <<(decltype(std::cout)& cout, const Vector<D, T>& 
 	v.print(cout);
 
 	return cout;
-}
-
-template <int D, typename T>
-void Vector<D, T>::printArray() { //Temporary
-	for (int i = 0; i < D; i++)
-		std::cout << array[i] << ' ';
-	std::cout << std::endl;
-}
-
-template <int D, typename T>
-void Vector<D, T>::printSize() { //Temporary
-	std::cout << size << std::endl;
 }
