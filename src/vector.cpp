@@ -196,7 +196,7 @@ VectorCrossOperatorMediator<T> operator *(const Vector<3, T>& v) {
 
 template <typename T>
 Vector<3, T> crossProduct(const Vector<3, T>& u, const Vector<3, T>& v) {
-	T r1 = u.array[1]*v.array[2] - u.array[2]*u.array[1];
+	T r1 = u.array[1]*v.array[2] - u.array[2]*v.array[1];
 	T r2 = u.array[2]*v.array[0] - u.array[0]*v.array[2];
 	T r3 = u.array[0]*v.array[1] - u.array[1]*v.array[0];
 
