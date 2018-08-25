@@ -4,7 +4,7 @@ template <int D, typename T>
 class Vector {
 	public:
 		Vector();
-		int insert(T n);
+		void insert(T n);
 		class VectorCommaOperatorMediator {
 			public:
 				VectorCommaOperatorMediator& operator ,(T n);
@@ -19,8 +19,10 @@ class Vector {
 		Vector& operator +(const Vector& v);
 		void sub(const Vector& v);
 		Vector& operator -(const Vector& v);
-		void product(T n);
+		void mult(T n);
 		Vector& operator *(T n);
+		void div(T n);
+		Vector& operator /(T n);
 		T dotProduct(const Vector& v);
 		T operator *(const Vector& v);
 
@@ -33,21 +35,24 @@ class Vector {
 };
 
 template <int D, typename T>
+Vector<D, T>& operator *(T n, Vector<D, T>& v) {
+	return v * n;
+}
+
+template <int D, typename T>
 Vector<D, T>::Vector(): size(0) {
 	for (int i = 0; i < D; i++)
 		array[i] = 0;
 }
 
 template <int D, typename T>
-int Vector<D, T>::insert(T n) {
+void Vector<D, T>::insert(T n) {
 	if (size < D)
 		array[size++] = n;
 	else {
 		std::cerr << "Vector full" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
-
-	return n;
 }
 
 template <int D, typename T>
@@ -96,7 +101,7 @@ Vector<D, T>& Vector<D, T>::operator -(const Vector& v) {
 }
 
 template <int D, typename T>
-void Vector<D, T>::product(T n) {
+void Vector<D, T>::mult(T n) {
 	for (int i = 0; i < D; i++) {
 		array[i] *= n;
 	}
@@ -104,7 +109,26 @@ void Vector<D, T>::product(T n) {
 
 template <int D, typename T>
 Vector<D, T>& Vector<D, T>::operator *(T n) {
-	product(n);
+	mult(n);
+
+	return *this;
+}
+
+template <int D, typename T>
+void Vector<D, T>::div(T n) {
+	if (n != 0)
+		for (int i = 0; i < D; i++) {
+			array[i] /= n;
+		}
+	else {
+		std::cerr << "Division by zero" << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+}
+
+template <int D, typename T>
+Vector<D, T>& Vector<D, T>::operator /(T n) {
+	div(n);
 
 	return *this;
 }

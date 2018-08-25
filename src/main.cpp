@@ -15,10 +15,12 @@ int main() {
 	v1.printArray();
 	v1 - v2 - v2;
 	v1.printArray();
-	v1.product(2);
+	v1.mult(2);
 	v1.printArray();
 	v1 * 2;
 	v1.printArray();
+	2 * v2;
+	v2.printArray();
 	std::cout << v1 * v2 << std::endl;
 	std::cout << v2.dotProduct(v2) << std::endl;
 }
