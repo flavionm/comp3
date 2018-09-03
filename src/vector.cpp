@@ -21,14 +21,14 @@ class Vector {
 				friend class Vector;
 		};
 		VectorCommaOperatorMediator operator =(T n);
-		void add(const Vector& v);
-		Vector& operator +(const Vector& v);
-		void sub(const Vector& v);
-		Vector& operator -(const Vector& v);
-		void mult(T n);
-		Vector& operator *(T n);
-		void div(T n);
-		Vector& operator /(T n);
+		Vector add(const Vector& v);
+		Vector operator +(const Vector& v);
+		Vector sub(const Vector& v);
+		Vector operator -(const Vector& v);
+		Vector mult(T n);
+		Vector operator *(T n);
+		Vector div(T n);
+		Vector operator /(T n);
 		T dotProduct(const Vector& v);
 		T operator *(const Vector& v);
 		template <typename _T>
@@ -41,7 +41,7 @@ class Vector {
 };
 
 template <int D, typename T>
-Vector<D, T>& operator *(T n, Vector<D, T>& v);
+Vector<D, T> operator *(T n, Vector<D, T>& v);
 
 template <typename T>
 class VectorCrossOperatorMediator;
@@ -100,64 +100,72 @@ typename Vector<D, T>::VectorCommaOperatorMediator Vector<D, T>::operator =(T n)
 }
 
 template <int D, typename T>
-void Vector<D, T>::add(const Vector& v) {
+Vector<D, T> Vector<D, T>::add(const Vector& v) {
+	Vector result;
+
 	for (int i = 0; i < D; i++) {
-		array[i] += v.array[i];
+		result.array[i] = array[i] + v.array[i];
 	}
+
+	return result;
 }
 
 template <int D, typename T>
-Vector<D, T>& Vector<D, T>::operator +(const Vector& v) {
-	add(v);
-
-	return *this;
+Vector<D, T> Vector<D, T>::operator +(const Vector& v) {
+	return add(v);
 }
 
 template <int D, typename T>
-void Vector<D, T>::sub(const Vector& v) {
+Vector<D, T> Vector<D, T>::sub(const Vector& v) {
+	Vector result;
+
 	for (int i = 0; i < D; i++) {
-		array[i] -= v.array[i];
+		result.array[i] = array[i] - v.array[i];
 	}
+
+	return result;
 }
 
 template <int D, typename T>
-Vector<D, T>& Vector<D, T>::operator -(const Vector& v) {
-	sub(v);
-
-	return *this;
+Vector<D, T> Vector<D, T>::operator -(const Vector& v) {
+	return sub(v);
 }
 
 template <int D, typename T>
-void Vector<D, T>::mult(T n) {
+Vector<D, T> Vector<D, T>::mult(T n) {
+	Vector result;
+
 	for (int i = 0; i < D; i++) {
-		array[i] *= n;
+		result.array[i] = array[i] * n;
 	}
+
+	return result;
 }
 
 template <int D, typename T>
-Vector<D, T>& Vector<D, T>::operator *(T n) {
-	mult(n);
-
-	return *this;
+Vector<D, T> Vector<D, T>::operator *(T n) {
+	return mult(n);
 }
 
 template <int D, typename T>
-void Vector<D, T>::div(T n) {
+Vector<D, T> Vector<D, T>::div(T n) {
+	Vector result;
+
 	if (n != 0)
 		for (int i = 0; i < D; i++) {
-			array[i] /= n;
+			result.array[i] = array[i] / n;
 		}
 	else {
 		std::cerr << "Division by zero" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
+
+	return result;
 }
 
 template <int D, typename T>
-Vector<D, T>& Vector<D, T>::operator /(T n) {
-	div(n);
-
-	return *this;
+Vector<D, T> Vector<D, T>::operator /(T n) {
+	return div(n);
 }
 
 template <int D, typename T>
@@ -184,7 +192,7 @@ void Vector<D, T>::print(decltype(std::cout)& ostream) const {
 }
 
 template <int D, typename T>
-Vector<D, T>& operator *(T n, Vector<D, T>& v) {
+Vector<D, T> operator *(T n, Vector<D, T>& v) {
 	return v * n;
 }
 
