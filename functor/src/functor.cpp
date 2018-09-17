@@ -187,3 +187,23 @@ template <typename F>
 Logarithm<F> log (F f) {
    return Logarithm<F>(f);
 }
+
+template <typename F>
+class Sine {
+	public:
+		Sine (F f): f(f) {}
+		double operator () (double x) {
+			return std::sin(f(x));
+		}
+		double dx (double x) {
+			return std::cos(f(x)) * f.dx(x);
+		}
+
+	private:
+		F f;
+};
+
+template <typename F>
+Sine<F> sin (F f) {
+   return Sine<F>(f);
+}
