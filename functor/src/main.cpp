@@ -6,7 +6,7 @@ using namespace std;
 int main() {
 	X x;
 
-	auto f = 3.0 * x * x * 5.0;
+	auto f = 3.0 * x + x * 5.0;
 
-	cout << f(5.3) << ' ' << f.dx(5.3) << endl;
+	cout << f(5) << ' ' << f.dx(5) << endl;
 }
