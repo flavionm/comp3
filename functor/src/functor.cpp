@@ -41,13 +41,18 @@ class Add {
 };
 
 template <typename F1, typename F2>
-Add<F1,F2> operator + ( F1 f1, F2 f2 ) {
-   return Add<F1,F2>( f1, f2 );
+Add<F1,F2> operator + (F1 f1, F2 f2) {
+   return Add<F1,F2>(f1, f2);
 }
 
 template <typename F2>
-Add<C,F2> operator + ( double n, F2 f2 ) {
-   return Add<C,F2>( n, f2 );
+Add<C,F2> operator + (double n, F2 f2) {
+   return Add<C,F2>(n, f2);
+}
+
+template <typename F1>
+Add<F1,C> operator + (F1 f1, double n) {
+   return Add<F1,C>(f1, n);
 }
 
 template <typename F1, typename F2>
@@ -67,18 +72,18 @@ class Subtract {
 };
 
 template <typename F1, typename F2>
-Subtract<F1,F2> operator - ( F1 f1, F2 f2 ) {
-   return Subtract<F1,F2>( f1, f2 );
+Subtract<F1,F2> operator - (F1 f1, F2 f2) {
+   return Subtract<F1,F2>(f1, f2);
 }
 
 template <typename F2>
-Subtract<C,F2> operator - ( double n, F2 f2 ) {
-   return Subtract<C,F2>( n, f2 );
+Subtract<C,F2> operator - (double n, F2 f2) {
+   return Subtract<C,F2>(n, f2);
 }
 
 template <typename F1>
-Subtract<F1,C> operator - ( F1 f1, double n ) {
-   return Subtract<F1,C>( f1, n );
+Subtract<F1,C> operator - (F1 f1, double n) {
+   return Subtract<F1,C>(f1, n);
 }
 
 template <typename F1, typename F2>
@@ -98,18 +103,18 @@ class Multiply {
 };
 
 template <typename F1, typename F2>
-Multiply<F1,F2> operator * ( F1 f1, F2 f2 ) {
-   return Multiply<F1,F2>( f1, f2 );
+Multiply<F1,F2> operator * (F1 f1, F2 f2) {
+   return Multiply<F1,F2>(f1, f2);
 }
 
 template <typename F2>
-Multiply<C,F2> operator * ( double n, F2 f2 ) {
-   return Multiply<C,F2>( n, f2 );
+Multiply<C,F2> operator * (double n, F2 f2) {
+   return Multiply<C,F2>(n, f2);
 }
 
 template <typename F1>
-Multiply<F1,C> operator * ( F1 f1, double n ) {
-   return Multiply<F1,C>( f1, n );
+Multiply<F1,C> operator * (F1 f1, double n) {
+   return Multiply<F1,C>(f1, n);
 }
 
 template <typename F1, typename F2>
@@ -129,18 +134,18 @@ class Divide {
 };
 
 template <typename F1, typename F2>
-Divide<F1,F2> operator / ( F1 f1, F2 f2 ) {
-   return Divide<F1,F2>( f1, f2 );
+Divide<F1,F2> operator / (F1 f1, F2 f2) {
+   return Divide<F1,F2>(f1, f2);
 }
 
 template <typename F2>
-Divide<C,F2> operator / ( double n, F2 f2 ) {
-   return Divide<C,F2>( n, f2 );
+Divide<C,F2> operator / (double n, F2 f2) {
+   return Divide<C,F2>(n, f2);
 }
 
 template <typename F1>
-Divide<F1,C> operator / ( F1 f1, double n ) {
-   return Divide<F1,C>( f1, n );
+Divide<F1,C> operator / (F1 f1, double n) {
+   return Divide<F1,C>(f1, n);
 }
 
 template <typename F>
