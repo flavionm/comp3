@@ -207,3 +207,23 @@ template <typename F>
 Sine<F> sin (F f) {
    return Sine<F>(f);
 }
+
+template <typename F>
+class Cosine {
+	public:
+		Cosine (F f): f(f) {}
+		double operator () (double x) {
+			return std::cos(f(x));
+		}
+		double dx (double x) {
+			return -std::sin(f(x)) * f.dx(x);
+		}
+
+	private:
+		F f;
+};
+
+template <typename F>
+Cosine<F> cos (F f) {
+   return Cosine<F>(f);
+}
