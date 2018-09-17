@@ -1,4 +1,6 @@
 #include <cmath>
+#include <exception>
+#include <sstream>
 
 class X {
 	public:
@@ -226,4 +228,25 @@ class Cosine {
 template <typename F>
 Cosine<F> cos (F f) {
    return Cosine<F>(f);
+}
+
+template <typename F>
+class Power {
+	public:
+		Power(F f, int p): f(f), p(p) {};
+		double operator() (double x) {
+			return std::pow(f(x), p);
+		}
+		double dx (double x) {
+			return p * std::pow(f(x), p - 1) * f.dx(x);
+		}
+
+	private:
+		F f;
+		int p;
+};
+
+template <typename F>
+Power<F> operator ->* (F f, int p) {
+	return Power<F>(f, p);
 }
