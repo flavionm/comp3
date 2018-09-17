@@ -168,6 +168,22 @@ Exponential<F> exp (F f) {
    return Exponential<F>(f);
 }
 
-/*Exponential<C> exp (double n) {
-   return Exponential<C>(n);
-}*/
+template <typename F>
+class Logarithm {
+	public:
+		Logarithm (F f): f(f) {}
+		double operator () (double x) {
+			return std::log(f(x));
+		}
+		double dx (double x) {
+			return 1 / f(x) * f.dx(x);
+		}
+
+	private:
+		F f;
+};
+
+template <typename F>
+Logarithm<F> log (F f) {
+   return Logarithm<F>(f);
+}
