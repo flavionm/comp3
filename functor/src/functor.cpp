@@ -1,3 +1,5 @@
+#include <cmath>
+
 class X {
 	public:
 		double operator () (double x) {
@@ -140,3 +142,27 @@ template <typename F1>
 Divide<F1,C> operator / ( F1 f1, double n ) {
    return Divide<F1,C>( f1, n );
 }
+
+template <typename F>
+class Exponential {
+	public:
+		Exponential (F f): f(f) {}
+		double operator () (double x) {
+			return std::exp(f(x));
+		}
+		double dx (double x) {
+			return std::exp(f(x))*f.dx(x);
+		}
+
+	private:
+		F f;
+};
+
+template <typename F>
+Exponential<F> exp (F f) {
+   return Exponential<F>(f);
+}
+
+/*Exponential<C> exp (double n) {
+   return Exponential<C>(n);
+}*/
