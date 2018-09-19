@@ -278,14 +278,14 @@ class Logarithm {
 
 			s << "(log" << f.str() << ')';
 
-			return s;
+			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
 			s << "(1/" << f.str() << '*' << f.dx_str() << ')';
 
-			return s;
+			return s.str();
 		}
 
 	private:
@@ -312,14 +312,14 @@ class Sine {
 
 			s << "(sin" << f.str() << ')';
 
-			return s;
+			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
 			s << "(cos" << f.str() << '*' << f.dx_str() << ')';
 
-			return s;
+			return s.str();
 		}
 
 	private:
