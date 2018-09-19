@@ -194,6 +194,20 @@ class Divide {
 		double dx (double x) {
 			return (f1.dx(x)*f2(x) - f2.dx(x)*f1(x)) / (f2(x)*f2(x));
 		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << '(' << f1.str() << "/" << f2.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << "((" << f1.dx_str() << '*' << f2.str() << '-' << f2.dx_str() << '*' << f1.str() << ")/(" << f2.str() << '*' << f2.str() << "))";
+
+			return s.str();
+		}
 
 	private:
 		F1 f1;
