@@ -10,7 +10,7 @@ int main() {
 
 	//cout << f(5.3) << ' ' << f.dx(5.3) << endl;
 
-	auto f = sin(3.0) - exp(x) * x / 4.0 + log(7.0);
+	auto f = sin(3.0) - exp(cos(x)) * x / 4.0 + log(7.0);
 
 	cout << "str: " << f.str() << ", dx_str: " << f.dx_str() << endl;
 }

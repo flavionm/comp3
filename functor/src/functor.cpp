@@ -341,6 +341,20 @@ class Cosine {
 		double dx (double x) {
 			return -std::sin(f(x)) * f.dx(x);
 		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << "(cos" << f.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << "(-sin" << f.str() << '*' << f.dx_str() << ')';
+
+			return s.str();
+		}
 
 	private:
 		F f;
