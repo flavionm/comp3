@@ -159,7 +159,7 @@ class Multiply {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << '*' << f2.str() << '+' << f2.dx_str() << '*' << f1.str() << ')';
+			s << '(' << f1.dx_str() << '*' << f2.str() << '+' << f1.str() << '*' << f2.dx_str() << ')';
 
 			return s.str();
 		}
