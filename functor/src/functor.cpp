@@ -239,6 +239,20 @@ class Exponential {
 		double dx (double x) {
 			return std::exp(f(x))*f.dx(x);
 		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << "(exp" << f.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << "(exp" << f.str() << '*' << f.dx_str() << ')';
+
+			return s.str();
+		}
 
 	private:
 		F f;
