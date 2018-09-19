@@ -375,6 +375,20 @@ class Power {
 		double dx (double x) {
 			return p * std::pow(f(x), p - 1) * f.dx(x);
 		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << '(' << f.str() << '^' << p << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << '(' << p << '*' << f.str() << '^' << p - 1 << '*' << f.dx_str() << ')';
+
+			return s.str();
+		}
 
 	private:
 		F f;
