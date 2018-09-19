@@ -378,7 +378,7 @@ class Power {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << f.str() << '^' << p << ')';
+			s << f.str() << '^' << p;
 
 			return s.str();
 		}
