@@ -159,7 +159,7 @@ class Multiply {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << '*' << f2.str() << '+' << f1.str() << '*' << f2.dx_str() << ')';
+			s << "((" << f1.dx_str() << "*" << f2.str() << ")+(" << f1.str() << "*" << f2.dx_str() << "))";
 
 			return s.str();
 		}
@@ -204,7 +204,7 @@ class Divide {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << "((" << f1.dx_str() << '*' << f2.str() << '-' << f2.dx_str() << '*' << f1.str() << ")/(" << f2.str() << '*' << f2.str() << "))";
+			s << "((" << f1.dx_str() << "*" << f2.str() << ")-(" << f2.dx_str() << "*" << f1.str() << "))/(" << f2.str() << "*" << f2.str() << ")";
 
 			return s.str();
 		}
@@ -249,7 +249,7 @@ class Exponential {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << "(exp" << f.str() << '*' << f.dx_str() << ')';
+			s << "((exp" << f.str() << ")*(" << f.dx_str() << "))";
 
 			return s.str();
 		}
@@ -283,7 +283,7 @@ class Logarithm {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << "(1/" << f.str() << '*' << f.dx_str() << ')';
+			s << "(((1)/" << f.str() << ")*(" << f.dx_str() << "))";
 
 			return s.str();
 		}
@@ -317,7 +317,7 @@ class Sine {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << "(cos" << f.str() << '*' << f.dx_str() << ')';
+			s << "((cos" << f.str() << ")*(" << f.dx_str() << "))";
 
 			return s.str();
 		}
@@ -351,7 +351,7 @@ class Cosine {
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << "(-sin" << f.str() << '*' << f.dx_str() << ')';
+			s << "(((-1)*(sin" << f.str() << "))*(" << f.dx_str() << "))";
 
 			return s.str();
 		}
@@ -378,14 +378,14 @@ class Power {
 		std::string str () const {
 			std::stringstream s;
 
-			s << "(" << f.str() << "^" << p << ")";
+			s << '(' << f.str() << "^" << p << ')';
 
 			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << p << '*' << f.dx_str() << '*' << f.str() << p - 1 << ')';
+			s << "(((" << p << ")*" << f.dx_str() << ")*(" << f.str() << "^" << p - 1 << "))";
 
 			return s.str();
 		}
