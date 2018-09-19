@@ -273,6 +273,20 @@ class Logarithm {
 		double dx (double x) {
 			return 1 / f(x) * f.dx(x);
 		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << "(log" << f.str() << ')';
+
+			return s;
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << "(1/" << f.str() << '*' << f.dx_str() << ')';
+
+			return s;
+		}
 
 	private:
 		F f;
