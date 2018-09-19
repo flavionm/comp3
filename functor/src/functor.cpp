@@ -14,10 +14,10 @@ class X {
 			return 1;
 		}
 		std::string str () const {
-			return "x";
+			return "(x)";
 		}
 		std::string dx_str () const {
-			return "1";
+			return "(1)";
 		}
 };
 
@@ -37,12 +37,12 @@ class C {
 		std::string str () const {
 			std::stringstream s;
 
-			s << c;
+			s << '(' << c << ')';
 
 			return s.str();
 		}
 		std::string dx_str () const {
-			return "0";
+			return "(0)";
 		}
 
 	private:
@@ -62,14 +62,14 @@ class Add {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << f1.str() << ") + (" << f2.str() << ')';
+			s << '(' << f1.str() << "+" << f2.str() << ')';
 
 			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << ") + (" << f2.dx_str() << ')';
+			s << '(' << f1.dx_str() << "+" << f2.dx_str() << ')';
 
 			return s.str();
 		}
@@ -107,14 +107,14 @@ class Subtract {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << f1.str() << ") - (" << f2.str() << ')';
+			s << '(' << f1.str() << "-" << f2.str() << ')';
 
 			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << ") - (" << f2.dx_str() << ')';
+			s << '(' << f1.dx_str() << "-" << f2.dx_str() << ')';
 
 			return s.str();
 		}
@@ -148,6 +148,20 @@ class Multiply {
 		}
 		double dx (double x) {
 			return f1.dx(x)*f2(x) + f2.dx(x)*f1(x);
+		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << '(' << f1.str() << "*" << f2.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << '(' << f1.dx_str() << '*' << f2.str() << '+' << f2.dx_str() << '*' << f1.str() << ')';
+
+			return s.str();
 		}
 
 	private:
