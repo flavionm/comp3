@@ -14,11 +14,12 @@ class X {
 			return 1;
 		}
 		std::string str () const {
-			return "(x)";
+			return "x";
 		}
 		std::string dx_str () const {
-			return "(1)";
+			return "1";
 		}
+		const int precedence = 0;
 };
 
 class C {
@@ -37,16 +38,15 @@ class C {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << c << ')';
+			s << c;
 
 			return s.str();
 		}
 		std::string dx_str () const {
-			return "(0)";
+			return "0";
 		}
-
-	private:
-		double c;
+		const int precedence = 0;
+		const double c;
 };
 
 template <typename F1, typename F2>
@@ -62,17 +62,32 @@ class Add {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << f1.str() << "+" << f2.str() << ')';
+			if (f1.str() == "0") {}
+			else
+				s << f1.str() + "+";
+			if (f2.str() == "0") {}
+			else if (f2.precedence > precedence)
+				s << "(" << f2.str() << ")";
+			else
+				s << f2.str();
 
 			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << "+" << f2.dx_str() << ')';
+			if (f1.dx_str() == "0") {}
+			else
+				s << f1.dx_str() + "+";
+			if (f2.dx_str() == "0") {}
+			else if (f2.precedence > precedence)
+				s << "(" << f2.dx_str() << ")";
+			else
+				s << f2.dx_str();
 
 			return s.str();
 		}
+		const int precedence = 4;
 
 	private:
 		F1 f1;
