@@ -1,5 +1,6 @@
 #include <cmath>
 #include <exception>
+#include <string>
 #include <sstream>
 
 class X {
@@ -8,7 +9,15 @@ class X {
 			return x;
 		}
 		double dx (double x) {
+			x++;
+
 			return 1;
+		}
+		std::string str () const {
+			return "x";
+		}
+		std::string dx_str () const {
+			return "1";
 		}
 };
 
@@ -16,10 +25,24 @@ class C {
 	public:
 		C (double c): c(c) {}
 		double operator () (double x) {
+			x++;
+
 			return c;
 		}
 		double dx (double x) {
+			x++;
+
 			return 0;
+		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << c;
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			return "0";
 		}
 
 	private:
@@ -35,6 +58,20 @@ class Add {
 		}
 		double dx (double x) {
 			return f1.dx(x) + f2.dx(x);
+		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << '(' << f1.str() << ") + (" << f2.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << '(' << f1.dx_str() << ") + (" << f2.dx_str() << ')';
+
+			return s.str();
 		}
 
 	private:
@@ -66,6 +103,20 @@ class Subtract {
 		}
 		double dx (double x) {
 			return f1.dx(x) - f2.dx(x);
+		}
+		std::string str () const {
+			std::stringstream s;
+
+			s << '(' << f1.str() << ") - (" << f2.str() << ')';
+
+			return s.str();
+		}
+		std::string dx_str () const {
+			std::stringstream s;
+
+			s << '(' << f1.dx_str() << ") - (" << f2.dx_str() << ')';
+
+			return s.str();
 		}
 
 	private:
