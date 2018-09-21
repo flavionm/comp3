@@ -19,7 +19,7 @@ class X {
 		std::string dx_str () const {
 			return "1";
 		}
-		const int precedence = 0;
+		static const int precedence = 1;
 };
 
 class C {
@@ -45,7 +45,9 @@ class C {
 		std::string dx_str () const {
 			return "0";
 		}
-		const int precedence = 0;
+		static const int precedence = 1;
+
+	private:
 		const double c;
 };
 
@@ -63,13 +65,19 @@ class Add {
 			std::stringstream s;
 
 			if (f1.str() == "0") {}
+			else if (f1.precedence < precedence)
+				s << "(" << f1.str() + ")";
 			else
-				s << f1.str() + "+";
+				s << f1.str();
 			if (f2.str() == "0") {}
-			else if (f2.precedence > precedence)
-				s << "(" << f2.str() << ")";
-			else
-				s << f2.str();
+			else {
+				if (f1.str() != "0")
+					s << "+";
+				if (f2.precedence < precedence)
+					s << "(" << f2.str() << ")";
+				else
+					s << f2.str();
+			}
 
 			return s.str();
 		}
@@ -77,17 +85,23 @@ class Add {
 			std::stringstream s;
 
 			if (f1.dx_str() == "0") {}
+			else if (f1.precedence < precedence)
+				s << "(" << f1.dx_str() + ")";
 			else
-				s << f1.dx_str() + "+";
+				s << f1.dx_str();
 			if (f2.dx_str() == "0") {}
-			else if (f2.precedence > precedence)
-				s << "(" << f2.dx_str() << ")";
-			else
-				s << f2.dx_str();
+			else {
+				if (f1.dx_str() != "0")
+					s << "+";
+				if (f2.precedence < precedence)
+					s << "(" << f2.dx_str() << ")";
+				else
+					s << f2.dx_str();
+			}
 
 			return s.str();
 		}
-		const int precedence = 4;
+		static const int precedence = 0;
 
 	private:
 		F1 f1;
@@ -122,17 +136,43 @@ class Subtract {
 		std::string str () const {
 			std::stringstream s;
 
-			s << '(' << f1.str() << "-" << f2.str() << ')';
+			if (f1.str() == "0") {}
+			else if (f1.precedence < precedence)
+				s << "(" << f1.str() + ")";
+			else
+				s << f1.str();
+			if (f2.str() == "0") {}
+			else {
+				if (f1.str() != "0")
+					s << "-";
+				if (f2.precedence <= precedence)
+					s << "(" << f2.str() << ")";
+				else
+					s << f2.str();
+			}
 
 			return s.str();
 		}
 		std::string dx_str () const {
 			std::stringstream s;
 
-			s << '(' << f1.dx_str() << "-" << f2.dx_str() << ')';
+			if (f1.dx_str() == "0") {}
+			else if (f1.precedence < precedence)
+				s << "(" << f1.dx_str() + ")";
+			else
+				s << f1.dx_str();
+			if (f2.dx_str() == "0") {}
+			else {
+				s << "-";
+				if (f2.precedence <= precedence)
+					s << "(" << f2.dx_str() << ")";
+				else
+					s << f2.dx_str();
+			}
 
 			return s.str();
 		}
+		static const int precedence = 0;
 
 	private:
 		F1 f1;
