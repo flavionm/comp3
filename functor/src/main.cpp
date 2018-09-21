@@ -14,7 +14,9 @@ int main() {
 
 	//cout << f(5.3) << ' ' << f.dx(5.3) << endl;
 
-	auto f = 5.0 - x + 3.0 + x;
+	//auto f = 1.0 / x/ - 5.0 - x + 3.0 * 2.0 / 1.0;
 
-	cout << "f(x) = " << f.str() << ", f'(x) = " << f.dx_str() << endl;
+	auto f = (x+7.0)*(x-7.0);
+
+	cout << "f(x) = " << f.str().str << ", f'(x) = " << f.dx_str().str << endl;
 }

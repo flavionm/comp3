@@ -1,7 +1,26 @@
 #include <cmath>
 #include <exception>
+#include <iostream>
 #include <string>
 #include <sstream>
+
+enum {
+	P_ADD = 0, P_MULT, P_FUNC, P_CONST
+};
+
+struct precedence_string {
+	std::string str;
+	int precedence;
+
+	precedence_string() {}
+	precedence_string(std::string str, int precedence): str(str), precedence(precedence) {}
+};
+
+/*std::ostream& operator << (std::ostream& out, const precedence_string& pstr) {
+	out << pstr.str;
+
+	return out;
+}*/
 
 class X {
 	public:
@@ -13,13 +32,12 @@ class X {
 
 			return 1;
 		}
-		std::string str () const {
-			return "x";
+		precedence_string str () const {
+			return precedence_string("x", P_CONST);
 		}
-		std::string dx_str () const {
-			return "1";
+		precedence_string dx_str () const {
+			return precedence_string("1", P_CONST);
 		}
-		static const int precedence = 1;
 };
 
 class C {
@@ -35,17 +53,16 @@ class C {
 
 			return 0;
 		}
-		std::string str () const {
+		precedence_string str () const {
 			std::stringstream s;
 
 			s << c;
 
-			return s.str();
+			return precedence_string(s.str(), P_CONST);
 		}
-		std::string dx_str () const {
-			return "0";
+		precedence_string dx_str () const {
+			return precedence_string("0", P_CONST);
 		}
-		static const int precedence = 1;
 
 	private:
 		const double c;
@@ -61,47 +78,33 @@ class Add {
 		double dx (double x) {
 			return f1.dx(x) + f2.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			if (f1.str() == "0") {}
-			else if (f1.precedence < precedence)
-				s << "(" << f1.str() + ")";
-			else
-				s << f1.str();
-			if (f2.str() == "0") {}
-			else {
-				if (f1.str() != "0")
-					s << "+";
-				if (f2.precedence < precedence)
-					s << "(" << f2.str() << ")";
+		static precedence_string sum_str(precedence_string f1, precedence_string f2) {
+			if (f1.str == "0" && f2.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (f1.str != "0" && f2.str != "0") {
+				std::stringstream s;
+				if (f1.precedence < P_ADD)
+					s << "(" << f1.str << ")";
 				else
-					s << f2.str();
-			}
-
-			return s.str();
-		}
-		std::string dx_str () const {
-			std::stringstream s;
-
-			if (f1.dx_str() == "0") {}
-			else if (f1.precedence < precedence)
-				s << "(" << f1.dx_str() + ")";
-			else
-				s << f1.dx_str();
-			if (f2.dx_str() == "0") {}
-			else {
-				if (f1.dx_str() != "0")
-					s << "+";
-				if (f2.precedence < precedence)
-					s << "(" << f2.dx_str() << ")";
+					s << f1.str;
+				s << "+";
+				if (f2.precedence < P_ADD)
+					s << "(" << f2.str << ")";
 				else
-					s << f2.dx_str();
+					s << f2.str;
+				return precedence_string(s.str(), P_ADD);
+			} else if (f2.str == "0") {
+				return f1;
+			} else {
+				return f2;
 			}
-
-			return s.str();
 		}
-		static const int precedence = 0;
+		precedence_string str () const {
+			return sum_str(f1.str(), f2.str());
+		}
+		precedence_string dx_str () const {
+			return sum_str(f1.dx_str(), f2.dx_str());
+		}
 
 	private:
 		F1 f1;
@@ -133,46 +136,39 @@ class Subtract {
 		double dx (double x) {
 			return f1.dx(x) - f2.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			if (f1.str() == "0") {}
-			else if (f1.precedence < precedence)
-				s << "(" << f1.str() + ")";
-			else
-				s << f1.str();
-			if (f2.str() == "0") {}
-			else {
-				if (f1.str() != "0")
-					s << "-";
-				if (f2.precedence <= precedence)
-					s << "(" << f2.str() << ")";
+		static precedence_string sub_str(precedence_string f1, precedence_string f2) {
+			if (f1.str == "0" && f2.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (f1.str != "0" && f2.str != "0") {
+				std::stringstream s;
+				if (f1.precedence < P_ADD)
+					s << "(" << f1.str << ")";
 				else
-					s << f2.str();
-			}
-
-			return s.str();
-		}
-		std::string dx_str () const {
-			std::stringstream s;
-
-			if (f1.dx_str() == "0") {}
-			else if (f1.precedence < precedence)
-				s << "(" << f1.dx_str() + ")";
-			else
-				s << f1.dx_str();
-			if (f2.dx_str() == "0") {}
-			else {
+					s << f1.str;
 				s << "-";
-				if (f2.precedence <= precedence)
-					s << "(" << f2.dx_str() << ")";
+				if (f2.precedence <= P_ADD)
+					s << "(" << f2.str << ")";
 				else
-					s << f2.dx_str();
+					s << f2.str;
+				return precedence_string(s.str(), P_ADD);
+			} else if (f2.str == "0") {
+				return f1;
+			} else {
+				std::stringstream s;
+				s << "-";
+				if (f2.precedence <= P_ADD)
+					s << "(" << f2.str << ")";
+				else
+					s << f2.str;
+				return precedence_string(s.str(), P_ADD);
 			}
-
-			return s.str();
 		}
-		static const int precedence = 0;
+		precedence_string str () const {
+			return sub_str(f1.str(), f2.str());
+		}
+		precedence_string dx_str () const {
+			return sub_str(f1.dx_str(), f2.dx_str());
+		}
 
 	private:
 		F1 f1;
@@ -204,19 +200,37 @@ class Multiply {
 		double dx (double x) {
 			return f1.dx(x)*f2(x) + f2.dx(x)*f1(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << '(' << f1.str() << "*" << f2.str() << ')';
-
-			return s.str();
+		static precedence_string mul_str(precedence_string f1, precedence_string f2) {
+			if (f1.str == "0" || f2.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (f1.str == "1" && f2.str == "1") {
+				return precedence_string("1", P_CONST);
+			} else if (f1.str != "1" && f2.str != "1") {
+				std::stringstream s;
+				if (f1.precedence < P_MULT)
+					s << "(" << f1.str << ")";
+				else
+					s << f1.str;
+				s << "*";
+				if (f2.precedence < P_MULT)
+					s << "(" << f2.str << ")";
+				else
+					s << f2.str;
+				return precedence_string(s.str(), P_MULT);
+			} else if (f2.str == "1") {
+				return f1;
+			} else {
+				return f2;
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
+		precedence_string str () const {
+			return mul_str(f1.str(), f2.str());
+		}
+		precedence_string dx_str () const {
+			precedence_string mult1 = mul_str(f1.dx_str(), f2.str());
+			precedence_string mult2 = mul_str(f1.str(), f2.dx_str());
 
-			s << "((" << f1.dx_str() << "*" << f2.str() << ")+(" << f1.str() << "*" << f2.dx_str() << "))";
-
-			return s.str();
+			return Add<F1, F2>::sum_str(mult1, mult2);
 		}
 
 	private:
@@ -249,19 +263,49 @@ class Divide {
 		double dx (double x) {
 			return (f1.dx(x)*f2(x) - f2.dx(x)*f1(x)) / (f2(x)*f2(x));
 		}
+		static precedence_string div_str(precedence_string f1, precedence_string f2) {
+			if (f2.str == "0") {
+				throw std::overflow_error("Division by zero exception");
+			} else if (f1.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (f1.str == "1" && f2.str == "1") {
+				return precedence_string("1", P_CONST);
+			} else if (f1.str != "1" && f2.str != "1") {
+				std::stringstream s;
+				if (f1.precedence < P_MULT)
+					s << "(" << f1.str << ")";
+				else
+					s << f1.str;
+				s << "/";
+				if (f2.precedence <= P_MULT)
+					s << "(" << f2.str << ")";
+				else
+					s << f2.str;
+				return precedence_string(s.str(), P_MULT);
+			} else if (f2.str == "1") {
+				return f1;
+			} else {
+				std::stringstream s;
+				s << "1/";
+				if (f2.precedence <= P_MULT)
+					s << "(" << f2.str << ")";
+				else
+					s << f2.str;
+				return precedence_string(s.str(), P_MULT);
+			}
+		}
 		std::string str () const {
-			std::stringstream s;
-
-			s << '(' << f1.str() << "/" << f2.str() << ')';
-
-			return s.str();
+			return div_str(f1.str(), f2.str());
 		}
 		std::string dx_str () const {
-			std::stringstream s;
+			precedence_string mult1 = Multiply<F1, F2>::mul_str(f1.dx_str(), f2.str());
+			precedence_string mult2 = Multiply<F1, F2>::mul_str(f1.str(), f2.dx_str());
 
-			s << "((" << f1.dx_str() << "*" << f2.str() << ")-(" << f2.dx_str() << "*" << f1.str() << "))/(" << f2.str() << "*" << f2.str() << ")";
+			std::string diff = Subtract<F1, F2>::sub_str(mult1, mult2);
 
-			return s.str();
+			std::string mult_b = Multiply<F1, F2>::mul_str(f2.str(), f2.str());
+
+			return div_str(diff, mult_b);
 		}
 
 	private:
