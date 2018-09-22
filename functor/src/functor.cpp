@@ -424,19 +424,25 @@ class Logarithm {
 		double dx (double x) {
 			return 1 / f(x) * f.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << "(log" << f.str() << ')';
-
-			return s.str();
+		static precedence_string log_str(precedence_string f) {
+			if (f.str == "0") {
+				throw std::overflow_error("Logarithm of zero exception");
+			} else if (f.str == "1") {
+				return precedence_string("0", P_CONST);
+			} else {
+				std::stringstream s;
+				s << "log(" << f.str << ")";
+				return precedence_string(s.str(), P_FUNC);
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
+		precedence_string str () const {
+			return log_str(f.str());
+		}
+		precedence_string dx_str () const {
+			precedence_string one = precedence_string("1", P_CONST);
+			precedence_string log_dx = Divide<F, F>::div_str(one, f.str());
 
-			s << "(((1)/" << f.str() << ")*(" << f.dx_str() << "))";
-
-			return s.str();
+			return Multiply<F, F>::mul_str(log_dx, f.dx_str());
 		}
 
 	private:
