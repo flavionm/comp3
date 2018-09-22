@@ -5,7 +5,7 @@
 #include <sstream>
 
 enum {
-	P_ADD = 0, P_MULT, P_FUNC, P_CONST
+	P_ADD = 0, P_MULT, P_POWER, P_FUNC, P_CONST
 };
 
 struct precedence_string {
@@ -294,16 +294,16 @@ class Divide {
 				return precedence_string(s.str(), P_MULT);
 			}
 		}
-		std::string str () const {
+		precedence_string str () const {
 			return div_str(f1.str(), f2.str());
 		}
-		std::string dx_str () const {
+		precedence_string dx_str () const {
 			precedence_string mult1 = Multiply<F1, F2>::mul_str(f1.dx_str(), f2.str());
 			precedence_string mult2 = Multiply<F1, F2>::mul_str(f1.str(), f2.dx_str());
 
-			std::string diff = Subtract<F1, F2>::sub_str(mult1, mult2);
+			precedence_string diff = Subtract<F1, F2>::sub_str(mult1, mult2);
 
-			std::string mult_b = Multiply<F1, F2>::mul_str(f2.str(), f2.str());
+			precedence_string mult_b = Multiply<F1, F2>::mul_str(f2.str(), f2.str());
 
 			return div_str(diff, mult_b);
 		}
@@ -474,19 +474,33 @@ class Power {
 		double dx (double x) {
 			return p * std::pow(f(x), p - 1) * f.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << '(' << f.str() << "^" << p << ')';
-
-			return s.str();
+		static precedence_string pow_str(precedence_string f, int p) {
+			if (f.str == "1" || p == 0) {
+				return precedence_string("1", P_CONST);
+			} else if (f.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (p == 1) {
+				return f;
+			} else {
+				std::stringstream s;
+				if (f.precedence <= P_POWER)
+					s << "(" << f.str << ")";
+				else
+					s << f.str;
+				s << "^" << p;
+				return precedence_string(s.str(), P_POWER);
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
+		precedence_string str () const {
+			return pow_str(f.str(), p);
+		}
+		precedence_string dx_str () const {
+			precedence_string old_p = precedence_string(std::to_string(p), P_CONST);
+			precedence_string new_p = pow_str(f.str(), p - 1);
 
-			s << "(((" << p << ")*" << f.dx_str() << ")*(" << f.str() << "^" << p - 1 << "))";
+			precedence_string exp_dx = Multiply<F, F>::mul_str(old_p, new_p);
 
-			return s.str();
+			return Multiply<F, F>::mul_str(exp_dx, f.dx_str());
 		}
 
 	private:
