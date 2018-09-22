@@ -16,7 +16,7 @@ int main() {
 
 	//auto f = 1.0 / x/ - 5.0 - x + 3.0 * 2.0 / 1.0;
 
-	auto f = (log(x->*2)+7.0)/(exp(x-7.0));
+	auto f = cos((log(x->*2)+7.0)/(exp(x-7.0)));
 
 	cout << "f(x) = " << f.str().str << ", f'(x) = " << f.dx_str().str << endl;
 }

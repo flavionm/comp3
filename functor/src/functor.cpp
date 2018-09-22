@@ -464,20 +464,19 @@ class Sine {
 		double dx (double x) {
 			return std::cos(f(x)) * f.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << "(sin" << f.str() << ')';
-
-			return s.str();
+		static precedence_string sin_str(precedence_string f) {
+			if (f.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else {
+				std::stringstream s;
+				s << "sin(" << f.str << ")";
+				return precedence_string(s.str(), P_FUNC);
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
-
-			s << "((cos" << f.str() << ")*(" << f.dx_str() << "))";
-
-			return s.str();
+		precedence_string str () const {
+			return sin_str(f.str());
 		}
+		precedence_string dx_str () const;
 
 	private:
 		F f;
@@ -498,19 +497,25 @@ class Cosine {
 		double dx (double x) {
 			return -std::sin(f(x)) * f.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << "(cos" << f.str() << ')';
-
-			return s.str();
+		static precedence_string cos_str(precedence_string f) {
+			if (f.str == "0") {
+				return precedence_string("1", P_CONST);
+			} else {
+				std::stringstream s;
+				s << "cos(" << f.str << ")";
+				return precedence_string(s.str(), P_FUNC);
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
+		precedence_string str () const {
+			return cos_str(f.str());
+		}
+		precedence_string dx_str () const {
+			precedence_string zero = precedence_string("0", P_CONST);
+			precedence_string m_cos_dx = Sine<F>::sin_str(f.str());
 
-			s << "(((-1)*(sin" << f.str() << "))*(" << f.dx_str() << "))";
+			precedence_string cos_dx = Subtract<F, F>::sub_str(zero, m_cos_dx);
 
-			return s.str();
+			return Multiply<F, F>::mul_str(cos_dx, f.dx_str());
 		}
 
 	private:
@@ -520,4 +525,11 @@ class Cosine {
 template <typename F>
 Cosine<F> cos (F f) {
    return Cosine<F>(f);
+}
+
+template<typename F>
+precedence_string Sine<F>::dx_str() const {
+	precedence_string sin_dx = Cosine<F>::cos_str(f.dx_str());
+
+	return Multiply<F, F>::mul_str(sin_dx, f.dx_str());
 }
