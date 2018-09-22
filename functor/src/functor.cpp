@@ -287,9 +287,9 @@ class Power {
 			precedence_string old_p = precedence_string(std::to_string(p), P_CONST);
 			precedence_string new_p = pow_str(f.str(), p - 1);
 
-			precedence_string exp_dx = Multiply<F, F>::mul_str(old_p, new_p);
+			precedence_string pow_dx = Multiply<F, F>::mul_str(old_p, new_p);
 
-			return Multiply<F, F>::mul_str(exp_dx, f.dx_str());
+			return Multiply<F, F>::mul_str(pow_dx, f.dx_str());
 		}
 
 	private:
@@ -387,19 +387,22 @@ class Exponential {
 		double dx (double x) {
 			return std::exp(f(x))*f.dx(x);
 		}
-		std::string str () const {
-			std::stringstream s;
-
-			s << "(exp" << f.str() << ')';
-
-			return s.str();
+		static precedence_string exp_str(precedence_string f) {
+			if (f.str == "0") {
+				return precedence_string("1", P_CONST);
+			} else {
+				std::stringstream s;
+				s << "exp(" << f.str << ")";
+				return precedence_string(s.str(), P_FUNC);
+			}
 		}
-		std::string dx_str () const {
-			std::stringstream s;
+		precedence_string str () const {
+			return exp_str(f.str());
+		}
+		precedence_string dx_str () const {
+			precedence_string exp_dx = exp_str(f.str());
 
-			s << "((exp" << f.str() << ")*(" << f.dx_str() << "))";
-
-			return s.str();
+			return Multiply<F, F>::mul_str(exp_dx, f.dx_str());
 		}
 
 	private:
