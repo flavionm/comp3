@@ -285,11 +285,11 @@ class Power {
 		}
 		precedence_string dx_str () const {
 			precedence_string old_p = precedence_string(std::to_string(p), P_CONST);
-			precedence_string new_p = pow_str(f.str(), p - 1);
+			precedence_string mult_r = Multiply<F, F>::mul_str(old_p, f.dx_str());
 
-			precedence_string pow_dx = Multiply<F, F>::mul_str(old_p, new_p);
+			precedence_string p_pow_dx = pow_str(f.str(), p - 1);
 
-			return Multiply<F, F>::mul_str(pow_dx, f.dx_str());
+			return Multiply<F, F>::mul_str(mult_r, p_pow_dx);
 		}
 
 	private:
@@ -529,7 +529,7 @@ Cosine<F> cos (F f) {
 
 template<typename F>
 precedence_string Sine<F>::dx_str() const {
-	precedence_string sin_dx = Cosine<F>::cos_str(f.dx_str());
+	precedence_string sin_dx = Cosine<F>::cos_str(f.str());
 
 	return Multiply<F, F>::mul_str(sin_dx, f.dx_str());
 }
