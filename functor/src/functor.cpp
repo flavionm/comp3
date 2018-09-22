@@ -253,6 +253,55 @@ Multiply<F1,C> operator * (F1 f1, double n) {
    return Multiply<F1,C>(f1, n);
 }
 
+template <typename F>
+class Power {
+	public:
+		Power(F f, int p): f(f), p(p) {};
+		double operator() (double x) {
+			return std::pow(f(x), p);
+		}
+		double dx (double x) {
+			return p * std::pow(f(x), p - 1) * f.dx(x);
+		}
+		static precedence_string pow_str(precedence_string f, int p) {
+			if (f.str == "1" || p == 0) {
+				return precedence_string("1", P_CONST);
+			} else if (f.str == "0") {
+				return precedence_string("0", P_CONST);
+			} else if (p == 1) {
+				return f;
+			} else {
+				std::stringstream s;
+				if (f.precedence <= P_POWER)
+					s << "(" << f.str << ")";
+				else
+					s << f.str;
+				s << "^" << p;
+				return precedence_string(s.str(), P_POWER);
+			}
+		}
+		precedence_string str () const {
+			return pow_str(f.str(), p);
+		}
+		precedence_string dx_str () const {
+			precedence_string old_p = precedence_string(std::to_string(p), P_CONST);
+			precedence_string new_p = pow_str(f.str(), p - 1);
+
+			precedence_string exp_dx = Multiply<F, F>::mul_str(old_p, new_p);
+
+			return Multiply<F, F>::mul_str(exp_dx, f.dx_str());
+		}
+
+	private:
+		F f;
+		int p;
+};
+
+template <typename F>
+Power<F> operator ->* (F f, int p) {
+	return Power<F>(f, p);
+}
+
 template <typename F1, typename F2>
 class Divide {
 	public:
@@ -303,7 +352,7 @@ class Divide {
 
 			precedence_string diff = Subtract<F1, F2>::sub_str(mult1, mult2);
 
-			precedence_string mult_b = Multiply<F1, F2>::mul_str(f2.str(), f2.str());
+			precedence_string mult_b = Power<F1>::pow_str(f2.str(), 2);
 
 			return div_str(diff, mult_b);
 		}
@@ -462,53 +511,4 @@ class Cosine {
 template <typename F>
 Cosine<F> cos (F f) {
    return Cosine<F>(f);
-}
-
-template <typename F>
-class Power {
-	public:
-		Power(F f, int p): f(f), p(p) {};
-		double operator() (double x) {
-			return std::pow(f(x), p);
-		}
-		double dx (double x) {
-			return p * std::pow(f(x), p - 1) * f.dx(x);
-		}
-		static precedence_string pow_str(precedence_string f, int p) {
-			if (f.str == "1" || p == 0) {
-				return precedence_string("1", P_CONST);
-			} else if (f.str == "0") {
-				return precedence_string("0", P_CONST);
-			} else if (p == 1) {
-				return f;
-			} else {
-				std::stringstream s;
-				if (f.precedence <= P_POWER)
-					s << "(" << f.str << ")";
-				else
-					s << f.str;
-				s << "^" << p;
-				return precedence_string(s.str(), P_POWER);
-			}
-		}
-		precedence_string str () const {
-			return pow_str(f.str(), p);
-		}
-		precedence_string dx_str () const {
-			precedence_string old_p = precedence_string(std::to_string(p), P_CONST);
-			precedence_string new_p = pow_str(f.str(), p - 1);
-
-			precedence_string exp_dx = Multiply<F, F>::mul_str(old_p, new_p);
-
-			return Multiply<F, F>::mul_str(exp_dx, f.dx_str());
-		}
-
-	private:
-		F f;
-		int p;
-};
-
-template <typename F>
-Power<F> operator ->* (F f, int p) {
-	return Power<F>(f, p);
 }
