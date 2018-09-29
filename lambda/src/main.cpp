@@ -9,10 +9,10 @@ void f (int x) {
 }
 
 int main() {
-	int a[] = {1, 5, 3, 5, 7, 8};
-	vector<int> v = {1, 5, 3, 5, 7, 8};
+	int a[] = {1, 2, 3, 4, 7, 8};
+	vector<int> v = {1, 2, 3, 4, 7, 8};
 
-	v | [] (int x) {cout << x << endl;};
+	v | [] (int x) {return x % 2 == 0;} | [] (int x) {cout << x << endl;};
 	cout << endl;
 	v | f;
 	cout << endl;
