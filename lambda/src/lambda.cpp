@@ -58,24 +58,6 @@ class Add {
 		T operator () (T x) {
 			return f1(x) + f2(x);
 		}
-		/*template <typename T>
-		auto operator () (T x) -> typename std::enable_if<std::is_invocable<F1>::value && std::is_invocable<F2>::value, T>::type {
-			T result = f1(x) + f2(x);
-			std::cout << result << std::endl; //temporary
-			return result;
-		}
-		template <typename T>
-		auto operator () (T x) -> typename std::enable_if<!std::is_same<typename std::result_of<F1(T)>::type, T>::value && std::is_same<typename std::result_of<F2(T)>, T>::value, T>::type {
-			T result = f1 + f2(x);
-			std::cout << result << std::endl; //temporary
-			return result;
-		}
-		template <typename T>
-		auto operator () (T x) -> typename std::enable_if<std::is_same<typename std::result_of<F1(T)>::type, T>::value && !std::is_same<typename std::result_of<F2(T)>, T>::value, T>::type {
-			T result = f1(x) + f2;
-			std::cout << result << std::endl; //temporary
-			return result;
-		}*/
 
 	private:
 		F1 f1;
@@ -83,19 +65,19 @@ class Add {
 };
 
 template <typename F1, typename F2>
-Add<F1, F2> operator + (F1 f1, F2 f2) {
+auto operator + (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Add<F1, F2>>::type {
 	return Add<F1, F2>(f1, f2);
 }
 
-/*template <typename C, typename F2>
-Add<Constant<C>, F2> operator + (C c, F2 f2) {
+template <typename C, typename F2>
+auto operator + (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Add<Constant<C>, F2>>::type {
 	return Add<Constant<C>, F2>(c, f2);
 }
 
 template <typename F1, typename C>
-Add<F1, Constant<C>> operator + (F1 f1, C c) {
+auto operator + (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Add<F1, Constant<C>>>::type {
 	return Add<F1, Constant<C>>(f1, c);
-}*/
+}
 
 template <typename F1, typename F2>
 class Subtract {
@@ -112,8 +94,18 @@ class Subtract {
 };
 
 template <typename F1, typename F2>
-Subtract<F1, F2> operator - (F1 f1, F2 f2) {
+auto operator - (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Subtract<F1, F2>>::type {
 	return Subtract<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator - (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Subtract<Constant<C>, F2>>::type {
+	return Subtract<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator - (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Subtract<F1, Constant<C>>>::type {
+	return Subtract<F1, Constant<C>>(f1, c);
 }
 
 template <typename F>
@@ -131,8 +123,13 @@ class Print {
 };
 
 template <typename F>
-Print<F> operator << (std::ostream& cout, F f) {
+auto operator << (std::ostream& cout, F f) -> typename std::enable_if<!std::is_scalar<F>::value, Print<F>>::type {
 	return Print<F>(cout, f);
+}
+
+template <typename C>
+auto operator << (std::ostream& cout, C c) -> typename std::enable_if<std::is_scalar<C>::value, Print<Constant<C>>>::type {
+	return Print<Constant<C>>(cout, c);
 }
 
 template <typename F1, typename F2>
@@ -141,7 +138,7 @@ class RePrint {
 		RePrint(F1 f1, F2 f2): f1(f1), f2(f2) {}
 		template <typename T>
 		std::ostream& operator() (T x) {
-			return f1(x).put(f2);
+			return f1(x).put(f2(x));
 		}
 
 	private:
@@ -150,8 +147,13 @@ class RePrint {
 };
 
 template <typename F1, typename F2>
-RePrint<F1, F2> operator << (F1 f1, F2 f2) {
+auto operator << (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F2>::value, RePrint<F1, F2>>::type {
 	return RePrint<F1, F2>(f1, f2);
+}
+
+template <typename F1, typename C>
+auto operator << (F1 f1, C c) -> typename std::enable_if<std::is_scalar<C>::value, RePrint<F1, Constant<C>>>::type {
+	return RePrint<F1, Constant<C>>(f1, c);
 }
 
 template <typename F1, typename F2>
@@ -169,8 +171,18 @@ class Multiply {
 };
 
 template <typename F1, typename F2>
-Multiply<F1, F2> operator * (F1 f1, F2 f2) {
+auto operator * (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Multiply<F1, F2>>::type {
 	return Multiply<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator * (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Multiply<Constant<C>, F2>>::type {
+	return Multiply<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator * (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Multiply<F1, Constant<C>>>::type {
+	return Multiply<F1, Constant<C>>(f1, c);
 }
 
 template <typename F1, typename F2>
@@ -188,8 +200,18 @@ class Divide {
 };
 
 template <typename F1, typename F2>
-Divide<F1, F2> operator / (F1 f1, F2 f2) {
+auto operator / (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Divide<F1, F2>>::type {
 	return Divide<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator / (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Divide<Constant<C>, F2>>::type {
+	return Divide<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator / (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Divide<F1, Constant<C>>>::type {
+	return Divide<F1, Constant<C>>(f1, c);
 }
 
 template <typename F1, typename F2>
@@ -207,6 +229,45 @@ class Module {
 };
 
 template <typename F1, typename F2>
-Module<F1, F2> operator % (F1 f1, F2 f2) {
+auto operator % (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Module<F1, F2>>::type {
 	return Module<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator % (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Module<Constant<C>, F2>>::type {
+	return Module<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator % (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Module<F1, Constant<C>>>::type {
+	return Module<F1, Constant<C>>(f1, c);
+}
+
+template <typename F1, typename F2>
+class Comparison {
+	public:
+		Comparison(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		bool operator() (T x) {
+			return f1(x) == f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+auto operator == (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, Comparison<F1, F2>>::type {
+	return Comparison<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator == (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, Comparison<Constant<C>, F2>>::type {
+	return Comparison<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator == (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Comparison<F1, Constant<C>>>::type {
+	return Comparison<F1, Constant<C>>(f1, c);
 }
