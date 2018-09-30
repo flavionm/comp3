@@ -15,10 +15,18 @@ bool fi (int x) {
 X x;
 
 int main() {
-	int a[] = {1, 2, 3, 4, 7, 8};
+	int tab[] = {1, 2, 3, 4, 7, 8};
 	vector<int> v = {1, 2, 3, 4, 7, 8};
 
 	v | cout << x * x + x / x << '\n';
+	/*cout << endl;
+	tab | cout << x*x << '\n';
+	cout << endl;
+	tab | [ &v ]( int x ) { v.push_back( x ); };
+	cout << endl;
+	v | x % 2 == 0 | cout << x*x + 1 << '\n';
+	cout << endl;
+	v | x % 2 == 1 | x*x | cout << x << '\n';*/
 
 	return 0;
 }

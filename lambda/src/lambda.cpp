@@ -191,3 +191,22 @@ template <typename F1, typename F2>
 Divide<F1, F2> operator / (F1 f1, F2 f2) {
 	return Divide<F1, F2>(f1, f2);
 }
+
+template <typename F1, typename F2>
+class Module {
+	public:
+		Module(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		T operator () (T x) {
+			return f1(x) % f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+Module<F1, F2> operator % (F1 f1, F2 f2) {
+	return Module<F1, F2>(f1, f2);
+}
