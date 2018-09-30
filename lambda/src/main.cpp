@@ -18,7 +18,7 @@ int main() {
 	int a[] = {1, 2, 3, 4, 7, 8};
 	vector<int> v = {1, 2, 3, 4, 7, 8};
 
-	v | cout << x + x - x + x << '\n';
+	v | cout << x * x + x / x << '\n';
 
 	return 0;
 }

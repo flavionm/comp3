@@ -122,7 +122,7 @@ class Print {
 		Print(std::ostream& cout, F f): cout(cout), f(f) {}
 		template <typename T>
 		std::ostream& operator() (T x) {
-			return cout << x;
+			return cout << f(x);
 		}
 
 	private:
@@ -152,4 +152,42 @@ class RePrint {
 template <typename F1, typename F2>
 RePrint<F1, F2> operator << (F1 f1, F2 f2) {
 	return RePrint<F1, F2>(f1, f2);
+}
+
+template <typename F1, typename F2>
+class Multiply {
+	public:
+		Multiply(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		T operator () (T x) {
+			return f1(x) * f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+Multiply<F1, F2> operator * (F1 f1, F2 f2) {
+	return Multiply<F1, F2>(f1, f2);
+}
+
+template <typename F1, typename F2>
+class Divide {
+	public:
+		Divide(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		T operator () (T x) {
+			return f1(x) / f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+Divide<F1, F2> operator / (F1 f1, F2 f2) {
+	return Divide<F1, F2>(f1, f2);
 }
