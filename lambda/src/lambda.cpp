@@ -1,6 +1,6 @@
+#include <iostream>
 #include <vector>
 #include <type_traits>
-#include <iostream> //temporary
 
 template <typename V, typename F>
 auto operator | (V iterable, F function) -> typename std::enable_if<std::is_same<decltype(function(iterable[0])), bool>::value, V>::type {
@@ -56,9 +56,7 @@ class Add {
 		Add(F1 f1, F2 f2): f1(f1), f2(f2) {}
 		template <typename T>
 		T operator () (T x) {
-			T result = f1(x) + f2(x);
-			std::cout << result << std::endl; //temporary
-			return result;
+			return f1(x) + f2(x);
 		}
 		/*template <typename T>
 		auto operator () (T x) -> typename std::enable_if<std::is_invocable<F1>::value && std::is_invocable<F2>::value, T>::type {
@@ -98,3 +96,60 @@ template <typename F1, typename C>
 Add<F1, Constant<C>> operator + (F1 f1, C c) {
 	return Add<F1, Constant<C>>(f1, c);
 }*/
+
+template <typename F1, typename F2>
+class Subtract {
+	public:
+		Subtract(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		T operator () (T x) {
+			return f1(x) - f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+Subtract<F1, F2> operator - (F1 f1, F2 f2) {
+	return Subtract<F1, F2>(f1, f2);
+}
+
+template <typename F>
+class Print {
+	public:
+		Print(std::ostream& cout, F f): cout(cout), f(f) {}
+		template <typename T>
+		std::ostream& operator() (T x) {
+			return cout << x;
+		}
+
+	private:
+		std::ostream& cout;
+		F f;
+};
+
+template <typename F>
+Print<F> operator << (std::ostream& cout, F f) {
+	return Print<F>(cout, f);
+}
+
+template <typename F1, typename F2>
+class RePrint {
+	public:
+		RePrint(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		std::ostream& operator() (T x) {
+			return f1(x).put(f2);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+RePrint<F1, F2> operator << (F1 f1, F2 f2) {
+	return RePrint<F1, F2>(f1, f2);
+}
