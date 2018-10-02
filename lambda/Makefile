@@ -1,4 +1,4 @@
-CC		:= g++
+CC		:= g++-8
 C_FLAGS := -std=c++17 -pedantic -pedantic-errors -Wall -Wextra -march=native -Og
 
 BIN		:= bin
