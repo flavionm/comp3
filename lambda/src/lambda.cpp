@@ -11,13 +11,21 @@ auto operator | (V iterable, F function) -> typename std::enable_if<std::is_same
 }
 
 template <typename V, typename F>
-auto operator | (V iterable, F function) -> typename std::enable_if<!std::is_same<decltype(function(iterable[0])), bool>::value, void>::type {
+auto operator | (V iterable, F function) -> typename std::enable_if<std::is_same<decltype(function(iterable[0])), void>::value, void>::type {
 	for (auto x : iterable)
 		function(x);
 }
 
+template <typename V, typename F>
+auto operator | (V iterable, F function) -> typename std::enable_if<!std::is_same<decltype(function(iterable[0])), bool>::value && !std::is_same<decltype(function(iterable[0])), void>::value, std::vector<decltype(function(iterable[0]))>>::type {
+	std::vector<decltype(function(iterable[0]))> result;
+	for (auto x : iterable)
+		result.push_back(function(x));
+	return result;
+}
+
 template <typename T, int S, typename F>
-auto operator | (T(& array)[S] , F function) -> typename std::enable_if<std::is_same<decltype(function(array[0])), bool>::value, std::vector<T>>::type {
+auto operator | (T(& array)[S], F function) -> typename std::enable_if<std::is_same<decltype(function(array[0])), bool>::value, std::vector<T>>::type {
 	std::vector<T> filtered;
 	for (int i = 0; i < S; i++)
 		if (function(array[i])) filtered.push_back(array[i]);
@@ -25,9 +33,17 @@ auto operator | (T(& array)[S] , F function) -> typename std::enable_if<std::is_
 }
 
 template <typename T, int S, typename F>
-auto operator | (T(& array)[S], F function) -> typename std::enable_if<!std::is_same<decltype(function(array[0])), bool>::value, void>::type {
+auto operator | (T(& array)[S], F function) -> typename std::enable_if<std::is_same<decltype(function(array[0])), void>::value, void>::type {
 	for (int i = 0; i < S; i++)
 		function(array[i]);
+}
+
+template <typename T, int S, typename F>
+auto operator | (T(& array)[S], F function) -> typename std::enable_if<!std::is_same<decltype(function(array[0])), bool>::value && !std::is_same<decltype(function(array[0])), void>::value, std::vector<decltype(function(array[0]))>>::type {
+	std::vector<decltype(function(array[0]))> result;
+	for (int i = 0; i < S; i++)
+			result.push_back(function(array[i]));
+	return result;
 }
 
 class X {
@@ -43,6 +59,7 @@ class Constant {
 	public:
 		Constant(T c): c(c) {}
 		T operator () (T x) {
+			(void) x; //x is needed for this method to be called by the operations
 			return c;
 		}
 
@@ -137,8 +154,9 @@ class RePrint {
 	public:
 		RePrint(F1 f1, F2 f2): f1(f1), f2(f2) {}
 		template <typename T>
-		std::ostream& operator() (T x) {
-			return f1(x).put(f2(x));
+		T operator() (T x) {
+			f1(x).put(f2(x));
+			return x;
 		}
 
 	private:
