@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "lambda.cpp"
+#include <type_traits>
 
 using namespace std;
 
@@ -12,23 +13,16 @@ bool fi (int x) {
 	return x % 2 == 1;
 }
 
-X x;
-
 int main() {
-	int tab[] = {1, 2, 3, 4, 7, 8};
-	vector<int> u = {1, 2, 3, 4, 7, 8};
-	vector<int> v = {1, 2, 3, 4, 7, 8};
+	//cout << std::is_same<decltype(x(0.0)), double>::value << endl;
+	//cout << std::is_same<decltype(x(0.0)), double>::value << endl;
+	X x;
 
-	v | cout << 2 + x * x / 3 - 5 << '\n';
-	cout << endl;
-	tab | cout << x*x << '\n';
-	cout << endl;
-	u | [ &v ]( int x ) { v.push_back( x ); };
-	for (auto x : v) cout << x << endl;
-	cout << endl;
-	v | (x % 2 == 0) | cout << x*x + 1 << '\n';
-	cout << endl;
-	v | (x % 2 == 1) | x*x | cout << x << '\n';
+	vector< vector<int> > m{ { 1, 2, 3 }, { 0, 3, 7 }, { 1, 3 } };
+	//m | []( auto v ) { return v[0] != 0; } | [x]( auto v ) { v + 7 | cout << x << ' '; };
+	//m | []( auto v ) { return v[0] != 0; } | ( x | cout << x << ' ' );
+	//m | x[0] != 0 | ( x | cout << x << ' ' );
+	m | x[0] != 0 | (( x + 7 ) | cout << x << ' ' );
 
 	return 0;
 }

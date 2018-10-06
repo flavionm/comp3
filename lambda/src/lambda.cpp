@@ -2,6 +2,29 @@
 #include <vector>
 #include <type_traits>
 
+class Access {
+	public:
+		Access(int i): i(i) {}
+		template <typename T>
+		auto operator () (T x) -> typename T::value_type {
+			return x[i];
+		}
+
+	private:
+		int i;
+};
+
+class X {
+	public:
+		template <typename T>
+		T operator () (T x) {
+			return x;
+		}
+		Access operator [] (int i) {
+			return Access(i);
+		}
+};
+
 template <typename V, typename F>
 auto operator | (V iterable, F function) -> typename std::enable_if<std::is_same<decltype(function(iterable[0])), bool>::value, V>::type {
 	V filtered;
@@ -17,7 +40,7 @@ auto operator | (V iterable, F function) -> typename std::enable_if<std::is_same
 }
 
 template <typename V, typename F>
-auto operator | (V iterable, F function) -> typename std::enable_if<!std::is_same<decltype(function(iterable[0])), bool>::value && !std::is_same<decltype(function(iterable[0])), void>::value, std::vector<decltype(function(iterable[0]))>>::type {
+auto operator | (V iterable, F function) -> typename std::enable_if<!std::is_same<decltype(function(iterable[0])), bool>::value && !std::is_same<decltype(function(iterable[0])), void>::value && !std::is_same<decltype(function(iterable[0])), Access>::value, std::vector<decltype(function(iterable[0]))>>::type {
 	std::vector<decltype(function(iterable[0]))> result;
 	for (auto x : iterable)
 		result.push_back(function(x));
@@ -46,25 +69,18 @@ auto operator | (T(& array)[S], F function) -> typename std::enable_if<!std::is_
 	return result;
 }
 
-class X {
-	public:
-	template <typename T>
-		T operator () (T x) {
-			return x;
-		}
-};
-
-template <typename T>
+template <typename F>
 class Constant {
 	public:
-		Constant(T c): c(c) {}
-		T operator () (T x) {
+		Constant(F c): c(c) {}
+		template <typename T>
+		F operator () (T x) {
 			(void) x; //x is needed for this method to be called by the operations
 			return c;
 		}
 
 	private:
-		T c;
+		F c;
 };
 
 template <typename F1, typename F2>
@@ -288,4 +304,61 @@ auto operator == (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::valu
 template <typename F1, typename C>
 auto operator == (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, Comparison<F1, Constant<C>>>::type {
 	return Comparison<F1, Constant<C>>(f1, c);
+}
+
+template <typename F1, typename F2>
+class UnComparison {
+	public:
+		UnComparison(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		bool operator() (T x) {
+			return f1(x) != f2(x);
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+auto operator != (F1 f1, F2 f2) -> typename std::enable_if<!std::is_scalar<F1>::value && !std::is_scalar<F2>::value, UnComparison<F1, F2>>::type {
+	return UnComparison<F1, F2>(f1, f2);
+}
+
+template <typename C, typename F2>
+auto operator != (C c, F2 f2) -> typename std::enable_if<std::is_scalar<C>::value && !std::is_scalar<F2>::value, UnComparison<Constant<C>, F2>>::type {
+	return UnComparison<Constant<C>, F2>(c, f2);
+}
+
+template <typename F1, typename C>
+auto operator != (F1 f1, C c) -> typename std::enable_if<!std::is_scalar<F1>::value && std::is_scalar<C>::value, UnComparison<F1, Constant<C>>>::type {
+	return UnComparison<F1, Constant<C>>(f1, c);
+}
+
+template <typename F1, typename F2>
+class Pipe {
+	public:
+		Pipe(F1 f1, F2 f2): f1(f1), f2(f2) {}
+		template <typename T>
+		T operator () (T x) {
+			T xa = f1(x);
+			for (auto xi : xa)
+				f2(xi);
+			return x;
+		}
+
+	private:
+		F1 f1;
+		F2 f2;
+};
+
+template <typename F1, typename F2>
+auto operator | (F1 f1, F2 f2) -> typename std::enable_if<std::is_invocable<F1, int[]>::value && std::is_invocable<F2, int[]>::value, Pipe<F1, F2>>::type {
+	return Pipe<F1, F2>(f1, f2);
+}
+
+template <typename T>
+std::vector<T> operator + (std::vector<T> v, T x) {
+	v.push_back(x);
+	return v;
 }
