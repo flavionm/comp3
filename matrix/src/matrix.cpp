@@ -62,10 +62,8 @@ class Otimizador {
 		Matriz<L, F> otimize (const Matriz<C, F>& c) const {
 			Matriz<L, F> r;
 			if (L * C < LC * F || done) {
-				std::cout << "(a*b)*c" << std::endl;
 				r = multiply(multiply(a, b), c);
 			} else {
-				std::cout << "a*(b*c)" << std::endl;
 				r = multiply(a, multiply(b, c));
 			}
 			return r;
