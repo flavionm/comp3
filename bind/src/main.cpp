@@ -8,12 +8,10 @@ long mdc(long a, long b) {
 }
 
 int main() {
-	auto f2 = bind( mdc );
-
-	auto f1 = bind(f2, 12);
-
-	for( int i = 2; i <= 12; i++ )
-		cout << f1( i ) <<  " ";
-
+	auto f3 = bind( []( int x, int y, int z ){ cout << x*z << (char) y << " " ; } );
+	auto f1 = f3( 5, ';' );
+	for( int i = 0; i < 5; i++ )
+		f1( i );	
+	
 	return 0;
 }

@@ -19,6 +19,8 @@ class Bind {
 		Bind<F, A..., R...> operator () (R... rem) {
 			std::tuple<R...> t_rem (rem...);
 			std::tuple<A..., R...> t = std::tuple_cat(args, t_rem);
+			if constexpr(std::is_invocable<F, A..., R...>::value)
+				std::apply(f, t);
 			return Bind<F, A..., R...>(f, t);
 		}
 		auto call () const {
