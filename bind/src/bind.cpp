@@ -7,10 +7,14 @@ class Bind;
 template <typename F, typename... A>
 Bind<F, A...> bind (F f, A... a);
 
+template <typename F, typename... A, typename... B>
+Bind<F, A..., B...> bind (Bind<F, A...> b, B... args);
+
 template <typename F, typename... A>
 class Bind {
 	public:
 		Bind(F f, A... args): f(f), args(args...) {}
+		Bind(F f, std::tuple<A...> args): f(f), args(args) {}
 		template <typename... R>
 		auto operator () (R... rem) {
 			std::tuple<F> func (f);
@@ -21,6 +25,8 @@ class Bind {
 		auto call () const {
 			return std::apply(f, args);
 		}
+		template <typename... B>
+		friend Bind<F, A..., B...> bind (Bind<F, A...> b, B... args);
 
 	private:
 		F f;
@@ -35,4 +41,10 @@ std::ostream& operator << (std::ostream& cout, const Bind<F, A...>& bind) {
 template <typename F, typename... A>
 Bind<F, A...> bind (F f, A... a) {
 	return Bind<F, A...>(f, a...);
+}
+
+template <typename F, typename... A, typename... B>
+Bind<F, A..., B...> bind (Bind<F, A...> b, B... args) {
+	auto t = std::tuple_cat(b.args, args...);
+	return Bind<F, A..., B...>(b.f, t);
 }

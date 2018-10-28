@@ -3,16 +3,17 @@
 
 using namespace std;
 
-double func(int a, double b) {
-	return b;
+long mdc(long a, long b) {
+	return a + b;
 }
 
 int main() {
-	auto f = bind(func, 5);
+	auto f2 = bind( mdc );
 
-	auto f2 = f(4.5);
+	auto f1 = bind( f2, 12 );
 
-	cout << f2() << endl;
+	for( int i = 2; i <= 12; i++ )
+		cout << f1( i ) <<  " ";
 
 	return 0;
 }
