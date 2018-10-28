@@ -3,14 +3,16 @@
 
 using namespace std;
 
-void func(int a, double b) {
-	cout << a << " " << b << endl;
+double func(int a, double b) {
+	return b;
 }
 
 int main() {
 	auto f = bind(func, 5);
 
-	f(4.5);
+	auto f2 = f(4.5);
+
+	cout << f2() << endl;
 
 	return 0;
 }
