@@ -10,7 +10,7 @@ long mdc(long a, long b) {
 int main() {
 	auto f2 = bind( mdc );
 
-	auto f1 = bind( f2, 12 );
+	auto f1 = bind(f2, 12);
 
 	for( int i = 2; i <= 12; i++ )
 		cout << f1( i ) <<  " ";
