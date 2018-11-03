@@ -3,15 +3,17 @@
 
 using namespace std;
 
+PlaceHolder __;
+
 long mdc(long a, long b) {
 	return a + b;
 }
 
 int main() {
-	auto f3 = bind( []( int x, int y, int z ){ cout << x*z << (char) y << " " ; } );
-	auto f1 = f3( 5, ';' );
-	for( int i = 0; i < 5; i++ )
-		f1( i );
+	auto f3 = bind(mdc);
+	f3.print();
+	auto f1 = f3(__, 2);
+	f1.print();
 
 	return 0;
 }
