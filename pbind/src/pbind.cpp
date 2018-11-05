@@ -11,13 +11,27 @@ constexpr auto head (T t) {
 }
 
 template <typename T, std::size_t... I>
-constexpr auto tail_inner (T t, std::index_sequence<I...>) {
+constexpr auto __tail (T t, std::index_sequence<I...>) {
 	return std::tuple (std::get<I+1>(t)...);
 }
 
 template <typename... Args>
 constexpr auto tail (std::tuple<Args...> t) {
-	return tail_inner (t, std::make_index_sequence<sizeof...(Args) - 1>{});
+	return __tail (t, std::make_index_sequence<sizeof...(Args) - 1>{});
+}
+
+template <typename... Args1, typename... Args2, typename TF>
+constexpr auto __merge (std::tuple<Args1...> t1, std::tuple<Args2...> t2, TF tf) {
+	if constexpr (sizeof...(Args1) == 0)
+		return std::tuple_cat(tf, t2);
+	if constexpr (!std::is_same<decltype(head(t1)), PlaceHolder)
+		return merge(tail(t1), t2);
+	else if 
+}
+
+template <typename T1, typename T2>
+auto merge (T1 t1, T2 t2) {
+	return __merge (t1, t2, std::tuple<>{});
 }
 
 template <int S, typename T1, typename T2, typename... T3>
