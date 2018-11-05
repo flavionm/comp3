@@ -25,8 +25,10 @@ constexpr auto __merge (std::tuple<Args1...> t1, std::tuple<Args2...> t2, TF tf)
 	if constexpr (sizeof...(Args1) == 0)
 		return std::tuple_cat(tf, t2);
 	if constexpr (!std::is_same<decltype(head(t1)), PlaceHolder)
-		return merge(tail(t1), t2);
-	else if 
+		return merge(tail(t1), t2, tf);
+	if constexpr (std::is_same<decltype(head(t1)), PlaceHolder)
+		return merge(tail(t1), tail(t2), tuple_cat(tf, std::tuple(__)))
+	if
 }
 
 template <typename T1, typename T2>
