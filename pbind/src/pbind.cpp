@@ -5,6 +5,21 @@
 
 class PlaceHolder {};
 
+template <typename T>
+constexpr auto head (T t) {
+	return std::get<0>(t);
+}
+
+template <typename T, std::size_t... I>
+constexpr auto tail_inner (T t, std::index_sequence<I...>) {
+	return std::tuple (std::get<I+1>(t)...);
+}
+
+template <typename... Args>
+constexpr auto tail (std::tuple<Args...> t) {
+	return tail_inner (t, std::make_index_sequence<sizeof...(Args) - 1>{});
+}
+
 template <int S, typename T1, typename T2, typename... T3>
 auto finish(T1 args1, T2 args2, std::tuple<T3...> args_f) {
 	constexpr int SIZE = std::tuple_size<T2>::value > std::tuple_size<T1>::value ? std::tuple_size<T2>::value : std::tuple_size<T1>::value;
